@@ -75,9 +75,13 @@ WSGI_APPLICATION = 'SnackBar.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': Path.join(BASE_DIR, 'db.sqlite3'),
+    'default': { # Add database settings for mysql
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'SNACKBAR',
+        'USER': 'snackbar',
+        'PASSWORD': 'mariam',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
