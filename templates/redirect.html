@@ -1,0 +1,38 @@
+{% autoescape off %}
+
+<div class="timer" onload="timer(1800)">
+    <div> {{ success }} </div>
+        <div class="time">
+        <strong>Redirecting you to login page in: <span id="seconds">Loading...</span></strong>
+        </div>
+    </div>
+    <url id="url">{{ site_url }}</url>
+
+{% endautoescape %}
+
+<script>// Countdown timer for redirecting to another URL after several seconds
+
+    var seconds = 7; // seconds for HTML
+    var foo; // variable for clearInterval() function
+
+    function redirect() {
+        window.open(document.getElementById('url').innerText, '_self');
+    }
+
+    function updateSecs() {
+        document.getElementById("seconds").innerHTML = seconds;
+        seconds--;
+        if (seconds == -1) {
+            clearInterval(foo);
+            redirect();
+        }
+    }
+
+    function countdownTimer() {
+        foo = setInterval(function () {
+            updateSecs()
+        }, 1000);
+    }
+
+    countdownTimer();
+</script>
