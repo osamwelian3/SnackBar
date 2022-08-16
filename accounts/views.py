@@ -1,4 +1,3 @@
-import imp
 from django.shortcuts import HttpResponse
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -6,7 +5,6 @@ from django.utils.encoding import force_bytes, force_str
 from django.http import JsonResponse
 from django.core.mail import send_mail
 from rest_framework.decorators import api_view
-from rest_framework import permissions
 from rest_framework.response import Response
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from SnackBar.serializer import UserSerializer
@@ -110,11 +108,14 @@ def signin(request):
                 return Response({'Error': 'User with that user name does not exist.'})
             else:
                 user = authenticate(username=username, password=password)
-                if user is not None:
-                    login(request, user)
-                    return Response({'Success': 'Login successful'})
+                if not User.objects.get(username=username).is_active:
+                    return Response({'Detail': 'You have not activated your account. Check your email for a link to activate your account.'})
                 else:
-                    return Response({'Failed': 'Invalid credentials...'})
+                    if user is not None:
+                        login(request, user)
+                        return Response({'Success': 'Login successful'})
+                    else:
+                        return Response({'Failed': 'Invalid credentials...'})
     except Exception as e:
         print('Sign_in Exception' + str(e))
         return Response({'Error': 'Something went wrong trying to sign you in. Contact osamwelian3@gmail.com'})
@@ -131,3 +132,19 @@ def log_out(request):
     except Exception as e:
         print('Log_out Exception' + str(e))
         return Response({'Error': 'Something went wrong trying to log you out. Contact osamwelian3@gmail.com'})
+
+@csrf_protect
+@api_view(['GET'])
+def delete_account(request, username):
+    if request.user.is_authenticated:
+        user = User.objects.get(username=request.user.username)
+        if User.objects.filter(username=username).exists():
+            if user.is_superuser or user.is_staff:
+                User.objects.filter(username=username).delete()
+                return Response({'success': 'User account succesfuly deleted'})
+            else:
+                return Response({'perm-error': 'Your user rights dont allow you to perform this action. Login as an administrator'})
+        else:
+            return Response({'error': 'User does not exist'})
+    else:
+        return Response({'error': 'sign in to perform this action'})
