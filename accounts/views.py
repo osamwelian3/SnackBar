@@ -5,7 +5,6 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.http import JsonResponse
 from django.core.mail import send_mail
-from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework import permissions
 from rest_framework.response import Response
@@ -14,6 +13,7 @@ from SnackBar.serializer import UserSerializer
 from SnackBar.tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth import authenticate, login, logout
 
 
 
@@ -22,6 +22,14 @@ from django.contrib.sites.shortcuts import get_current_site
 @ensure_csrf_cookie
 def setCsrfCookie(request):
     return JsonResponse({"Success": "Cookies Set"})
+
+@csrf_protect
+@api_view(['GET'])
+def isAuthenticated(request):
+    if not request.user.is_authenticated:
+        return Response({'Detail': 'Not authenticated.'})
+    else:
+        return Response({'Detail': 'User is authenticated ' + str(request.user.username)})
 
 @csrf_protect
 @api_view(['POST'])
@@ -69,7 +77,7 @@ def signup(request):
                         user = UserSerializer(user)
                         return Response({ "data": user.data })
     except Exception as e:
-        print('Exception: '+ str(e))
+        print('Sign_up Exception: '+ str(e))
         return Response({"Error": "Something went wrong trying to sign you up. Contact osamwelian3@gmail.com"})
 
 @api_view(['GET'])
@@ -86,3 +94,40 @@ def activate(request, uidb64, token):
         return HttpResponse(response)
     else:
         return Response({'Failed': 'Activation link is invalid!'})
+
+@csrf_protect
+@api_view(['POST'])
+def signin(request):
+    try:
+        data = request.data
+        username = data['username']
+        password = data['password']
+
+        if len(username) < 1 and len(password) < 1:
+            return Response({'Error': 'Please provide username and password.'})
+        else:
+            if not User.objects.filter(username=username).exists():
+                return Response({'Error': 'User with that user name does not exist.'})
+            else:
+                user = authenticate(username=username, password=password)
+                if user is not None:
+                    login(request, user)
+                    return Response({'Success': 'Login successful'})
+                else:
+                    return Response({'Failed': 'Invalid credentials...'})
+    except Exception as e:
+        print('Sign_in Exception' + str(e))
+        return Response({'Error': 'Something went wrong trying to sign you in. Contact osamwelian3@gmail.com'})
+
+@csrf_protect
+@api_view(['GET'])
+def log_out(request):
+    try:
+        if not request.user.is_authenticated:
+            return Response({'Detail': 'You are already logged out'})
+        else:
+            logout(request)
+            return Response({'Success': 'Logout success.'})
+    except Exception as e:
+        print('Log_out Exception' + str(e))
+        return Response({'Error': 'Something went wrong trying to log you out. Contact osamwelian3@gmail.com'})
