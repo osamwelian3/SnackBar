@@ -8,7 +8,7 @@ class UserProfile(models.Model):
     last_name = models.CharField(max_length=32, default='')
     other_name = models.CharField(max_length=32, default='')
     email = models.CharField(max_length=255, default='')
-    phone = models.CharField(max_length=12, default='')
+    phone = models.CharField(max_length=13, default='')
     city = models.CharField(max_length=255, default='')
 
     class Meta:

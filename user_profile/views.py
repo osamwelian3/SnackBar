@@ -65,7 +65,8 @@ def update_profile(request):
                     user_profile = UserProfile(user=request.user,first_name=first_name, last_name=last_name, other_name=other_name, email=email, phone=phone, city=city)
                     user_profile.save()
                     return Response({'success': 'Your profile was updated successfully'})
-            except:
+            except Exception as e:
+                print(e)
                 return Response({'error': 'Something went wrong trying to update your profile'})
 
 @csrf_protect
@@ -73,9 +74,12 @@ def update_profile(request):
 def view_profile(request):
     try:
         if request.user.is_authenticated:
-            profile = UserProfile.objects.get(user=request.user)
-            user_profile = UserProfileSerializer(profile)
-            return Response({'data': user_profile.data})
+            try:
+                profile = UserProfile.objects.get(user=request.user)
+                user_profile = UserProfileSerializer(profile)
+                return Response({'data': user_profile.data})
+            except UserProfile.DoesNotExist:
+                return Response({'detail': 'You haven\'t updated your profile. Please update your profile.'})
         else:
             return Response({'error': 'Please login to view your profile'})
     except Exception as e:

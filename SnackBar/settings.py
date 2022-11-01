@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure--9no341%7@qo)n(gfoz0$&@s1!xmhu6%4*3dsf8qtln*@q242@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     #THIRD PARTY APPS
     'rest_framework',
     'corsheaders',
+    'django_hosts',
     # CUSTOM APPS
     'accounts',
     'user_profile',
@@ -46,7 +47,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     #THIRD PARTY MIDDLEWARE
+    'django_hosts.middleware.HostsRequestMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,14 +57,17 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_hosts.middleware.HostsResponseMiddleware',
 ]
 
 ROOT_URLCONF = 'SnackBar.urls'
+ROOT_HOSTCONF = 'SnackBar.hosts'
+DEFAULT_HOST= 'www'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [Path.joinpath(BASE_DIR, 'templates')],
+        'DIRS': [Path.joinpath(BASE_DIR, 'templates'), Path.joinpath(BASE_DIR, 'build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -116,7 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Nairobi'
 
 USE_I18N = True
 
@@ -127,6 +133,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [
+    Path.joinpath(BASE_DIR, 'build/static')
+]
+
+STATIC_ROOT = Path.joinpath(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -147,12 +159,60 @@ REST_FRAMEWORK = {
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+from corsheaders.defaults import default_headers
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'cache-control',
+    'x-sessionid',
+    'upgrade-insecure-requests',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+CORS_EXPOSE_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'set-cookie',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+CORS_PREFLIGHT_MAX_AGE = 0
+
+CORS_ALLOW_CREDENTIALS = True
+
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'meditativeian@gmail.com'
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_PASSWORD = 'tmxduxnzhdehalvo'
 EMAIL_USER = 'meditativeian@gmail.com'
-EMAIL_PASSWORD = ''
+EMAIL_PASSWORD = 'tmxduxnzhdehalvo'
+
+# CSRF_TRUSTED_ORIGINS = ['http://localhost:8020']
+
+# MessageBird settings
+SMS_BACKEND = 'sms.backends.messagebird.SmsBackend'
+MESSAGEBIRD_ACCESS_KEY = 'vpbJILJLhkGRlcjacwIqYWJLm'
+
+# session
+SESSION_COOKIE_NAME = "sessionkey"
+
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SECURE = False
+
+CSRF_TRUSTED_ORIGINS =  ['http://*.localhost:8000', 'http://*.127.0.0.1:8000', 'http://localhost:8000', 'http://127.0.0.1:8000', 'http://localhost:3000'] # ['https://*.mydomain.com','https://*.127.0.0.1']
