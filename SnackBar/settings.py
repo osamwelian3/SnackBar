@@ -91,7 +91,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'SNACKBAR',
         'USER': 'snackbar',
-        'PASSWORD': 'mariam',
+        'PASSWORD': 'password',
         'HOST': 'localhost',
         'PORT': '',
     }
