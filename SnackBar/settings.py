@@ -62,7 +62,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'SnackBar.urls'
 ROOT_HOSTCONF = 'SnackBar.hosts'
-DEFAULT_HOST= 'www'
+DEFAULT_HOST= 'api'
 
 TEMPLATES = [
     {
