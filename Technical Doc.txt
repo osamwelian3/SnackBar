@@ -16,4 +16,5 @@ List of Modified Files:
 2. 'django.contrib.sessions.middleware'     SessionMiddleware           20                      Add: (This will allow django to get the sessionid from X-SessionID header just incase cookies are not set)
                                                                                                     """ sessionid = request.META.get(u'HTTP_X_SESSIONID')
                                                                                                         if sessionid:
-                                                                                                            session_key = sessionid"""
+                                                                                                            session_key = sessionid
+                                                                                                        request.session = self.SessionStore(session_key)"""
