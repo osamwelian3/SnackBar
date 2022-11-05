@@ -92,7 +92,7 @@ DATABASES = {
         'NAME': 'SNACKBAR',
         'USER': 'snackbar',
         'PASSWORD': 'password',
-        'HOST': 'localhost',
+        'HOST': '3.210.151.182',
         'PORT': '',
     }
 }
