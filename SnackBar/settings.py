@@ -215,4 +215,4 @@ SESSION_COOKIE_NAME = "sessionkey"
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SECURE = False
 
-CSRF_TRUSTED_ORIGINS =  ['http://*.localhost:8000', 'http://*.127.0.0.1:8000', 'http://localhost:8000', 'http://127.0.0.1:8000', 'http://localhost:3000', 'http://shop-mall.xyz', 'http://*.shop-mall.xyz', 'http://api.shop-mall.xyz'] # ['https://*.mydomain.com','https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS =  ['http://*.localhost:8000', 'http://*.127.0.0.1:8000', 'http://localhost:8000', 'http://127.0.0.1:8000', 'http://localhost:3000', 'https://shop-mall.xyz', 'https://*.shop-mall.xyz', 'https://api.shop-mall.xyz'] # ['https://*.mydomain.com','https://*.127.0.0.1']
