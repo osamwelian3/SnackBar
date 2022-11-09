@@ -1,0 +1,2 @@
+#!/bin/bash
+cd ~/SnackBar/ && git pull && source ../backend-env/bin/activate && python manage.py collectstatic && sudo systemctl daemon-reload && sudo systemctl restart gunicorn && sudo systemctl reload nginx
