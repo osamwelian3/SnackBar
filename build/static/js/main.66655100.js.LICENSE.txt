@@ -171,6 +171,19 @@
  */
 
 /**
+ * Owl carousel
+ * @version 2.1.6
+ * @author Bartosz Wojciechowski
+ * @author Saurabh Sharma
+ * @license The MIT License (MIT)
+ * @todo Lazy Load Icon
+ * @todo prevent animationend bubling
+ * @todo itemsScaleUp
+ * @todo Test Zepto
+ * @todo stagePadding calculate wrong active classes
+ */
+
+/**
  * React Router DOM v6.3.0
  *
  * Copyright (c) Remix Software Inc.
