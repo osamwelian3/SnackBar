@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "https://shop-mall.xyz/static/css/main.dfd06e52.css",
-    "main.js": "https://shop-mall.xyz/static/js/main.35de9ee0.js",
+    "main.js": "https://shop-mall.xyz/static/js/main.386b3762.js",
     "static/media/fontawesome-webfont.svg?v=4.7.0": "https://shop-mall.xyz/static/media/fontawesome-webfont.c1e38fd9e0e74ba58f7a.svg",
     "static/media/ElegantIcons.svg": "https://shop-mall.xyz/static/media/ElegantIcons.a3709f859357b50798d9.svg",
     "static/media/fontawesome-webfont.eot": "https://shop-mall.xyz/static/media/fontawesome-webfont.8b43027f47b20503057d.eot",
@@ -33,10 +33,10 @@
     "static/media/cat-4.jpg": "https://shop-mall.xyz/static/media/cat-4.f3f692e5e3781bb0550d.jpg",
     "index.html": "https://shop-mall.xyz/index.html",
     "main.dfd06e52.css.map": "https://shop-mall.xyz/static/css/main.dfd06e52.css.map",
-    "main.35de9ee0.js.map": "https://shop-mall.xyz/static/js/main.35de9ee0.js.map"
+    "main.386b3762.js.map": "https://shop-mall.xyz/static/js/main.386b3762.js.map"
   },
   "entrypoints": [
     "static/css/main.dfd06e52.css",
-    "static/js/main.35de9ee0.js"
+    "static/js/main.386b3762.js"
   ]
 }
