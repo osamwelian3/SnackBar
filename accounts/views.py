@@ -71,6 +71,8 @@ def signup(request):
             if len(username) < 3:
                 return Response({'error': 'Username can\'t have less than three initials', 'username': 'username error'})
             else:
+                if password == 'google-auth':
+                    return Response({'error': 'Please choose a stronger password.'})
                 if password != password2:
                     return Response({'error': 'Passwords do not match', 'password2': 'password error'})
                 else:
@@ -130,6 +132,8 @@ def signin(request):
 
         if len(username) < 1 and len(password) < 1:
             return Response({'error': 'Please provide username and password.'})
+        elif password == 'google-auth':
+            return Response({'error': 'Invalid credentials.'})
         else:
             if not User.objects.filter(username=username).exists():
                 return Response({'error': 'User with that user name does not exist.'})

@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure--9no341%7@qo)n(gfoz0$&@s1!xmhu6%4*3dsf8qtln*@q242@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -43,6 +43,15 @@ INSTALLED_APPS = [
     # CUSTOM APPS
     'accounts',
     'user_profile',
+    'utils',
+    'social_auth',
+]
+
+AUTHENTICATION_BACKENDS = [
+# Default authentication of Django
+    'django.contrib.auth.backends.ModelBackend',
+# auth_backend.py implementing Class YourAuth inside yourapp folder
+    'utils.PasswordlessAuthBackend.PasswordlessAuthBackend', 
 ]
 
 MIDDLEWARE = [
@@ -86,13 +95,24 @@ WSGI_APPLICATION = 'SnackBar.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': { # Add database settings for mysql
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'SNACKBAR',
+#         'USER': 'snackbar',
+#         'PASSWORD': 'password',
+#         'HOST': '3.210.151.182',
+#         'PORT': '',
+#     }
+# }
+
 DATABASES = {
     'default': { # Add database settings for mysql
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'SNACKBAR',
         'USER': 'snackbar',
-        'PASSWORD': 'password',
-        'HOST': '3.210.151.182',
+        'PASSWORD': 'mariam',
+        'HOST': '127.0.0.1',
         'PORT': '',
     }
 }
@@ -219,3 +239,4 @@ CSRF_TRUSTED_ORIGINS =  ['http://*.localhost:8000', 'http://*.127.0.0.1:8000', '
 
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
