@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure--9no341%7@qo)n(gfoz0$&@s1!xmhu6%4*3dsf8qtln*@q242@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -95,27 +95,27 @@ WSGI_APPLICATION = 'SnackBar.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': { # Add database settings for mysql
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'SNACKBAR',
-#         'USER': 'snackbar',
-#         'PASSWORD': 'password',
-#         'HOST': '3.210.151.182',
-#         'PORT': '',
-#     }
-# }
-
 DATABASES = {
     'default': { # Add database settings for mysql
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'SNACKBAR',
         'USER': 'snackbar',
-        'PASSWORD': 'mariam',
-        'HOST': '127.0.0.1',
+        'PASSWORD': 'password',
+        'HOST': '3.210.151.182',
         'PORT': '',
     }
 }
+
+# DATABASES = {
+#     'default': { # Add database settings for mysql
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'SNACKBAR',
+#         'USER': 'snackbar',
+#         'PASSWORD': 'mariam',
+#         'HOST': '127.0.0.1',
+#         'PORT': '',
+#     }
+# }
 
 
 # Password validation
