@@ -4,5 +4,6 @@ from django.conf import settings
 host_patterns = patterns('',
     host(r'api', settings.ROOT_URLCONF, name='api'),
     host(r'www', 'SnackBar.newUrls', name='www'),
+    host(r'cpanel', 'admin_panel.urls', name='cpanel'),
     # host(r'maps', 'maps.urls', name='api'),
 )

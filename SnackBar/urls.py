@@ -16,6 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
+from . import settings
+from django.conf import settings as global_settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,7 +26,12 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('profile/', include('user_profile.urls')),
     path('social/', include('social_auth.urls')),
-]
+    path('catalog/', include('catalog.urls')),
+] + static(global_settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static('/assets/', document_root=settings.ASSETS_ROOT)
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
 
 # urlpatterns += [
 #     re_path(r'^.*', TemplateView.as_view(template_name='index.html'))

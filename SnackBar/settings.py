@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure--9no341%7@qo)n(gfoz0$&@s1!xmhu6%4*3dsf8qtln*@q242@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -41,10 +41,15 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_hosts',
     # CUSTOM APPS
+    # AUTH
     'accounts',
     'user_profile',
     'utils',
     'social_auth',
+    # ADMIN PANEL
+    'admin_panel',
+    # PRODUCTS
+    'catalog',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -76,7 +81,7 @@ DEFAULT_HOST= 'www'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [Path.joinpath(BASE_DIR, 'templates'), Path.joinpath(BASE_DIR, 'build')],
+        'DIRS': [Path.joinpath(BASE_DIR, 'templates'), Path.joinpath(BASE_DIR, 'build'), Path.joinpath(BASE_DIR, 'admin_panel/includes'), Path.joinpath(BASE_DIR, 'admin_panel/layouts')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -84,6 +89,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media'
             ],
         },
     },
@@ -95,27 +101,27 @@ WSGI_APPLICATION = 'SnackBar.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': { # Add database settings for mysql
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'SNACKBAR',
-        'USER': 'snackbar',
-        'PASSWORD': 'password',
-        'HOST': '3.210.151.182',
-        'PORT': '',
-    }
-}
-
 # DATABASES = {
 #     'default': { # Add database settings for mysql
 #         'ENGINE': 'django.db.backends.mysql',
 #         'NAME': 'SNACKBAR',
 #         'USER': 'snackbar',
-#         'PASSWORD': 'mariam',
-#         'HOST': '127.0.0.1',
+#         'PASSWORD': 'password',
+#         'HOST': '3.210.151.182',
 #         'PORT': '',
 #     }
 # }
+
+DATABASES = {
+    'default': { # Add database settings for mysql
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'SNACKBAR',
+        'USER': 'snackbar',
+        'PASSWORD': 'mariam',
+        'HOST': '127.0.0.1',
+        'PORT': '',
+    }
+}
 
 
 # Password validation
@@ -155,15 +161,31 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    Path.joinpath(BASE_DIR, 'build/static')
+    Path.joinpath(BASE_DIR, 'build/static'),
+    Path.joinpath(BASE_DIR, 'admin_panel/static'),
+    Path.joinpath(BASE_DIR, 'media'),
 ]
 
 STATIC_ROOT = Path.joinpath(BASE_DIR, 'static')
+
+# Media settings
+MEDIA_URL = '/media/' # '/build/static/media/'
+
+MEDIA_ROOT = str(Path.joinpath(BASE_DIR, 'media/').absolute())+'/' # Path.joinpath(BASE_DIR, 'build/static/media/')
+
+ASSETS_ROOT = str(Path.joinpath(BASE_DIR, 'build/assets/').absolute())+'/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Site template settings
+SITE_NAME = 'Shop Mall'
+
+META_KEYWORDS = 'Shop, Online Shop, ecommerce, Products, Affordable'
+
+META_DESCRIPTION = 'Your one stop shop for your everyday shopping at the most affordable prices.'
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
@@ -235,8 +257,13 @@ SESSION_COOKIE_NAME = "sessionkey"
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SECURE = False
 
-CSRF_TRUSTED_ORIGINS =  ['http://*.localhost:8000', 'http://*.127.0.0.1:8000', 'http://localhost:8000', 'http://127.0.0.1:8000', 'http://localhost:3000', 'https://shop-mall.xyz', 'https://*.shop-mall.xyz', 'https://api.shop-mall.xyz'] # ['https://*.mydomain.com','https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS =  ['http://*.localhost:8000', 'http://*.127.0.0.1:8000', 'http://localhost:8000', 'http://127.0.0.1:8000', 'http://localhost:3000', 'https://shop-mall.xyz', 'https://*.shop-mall.xyz', 'https://api.shop-mall.xyz', 'https://shop-mall-local.xyz', 'https://*.shop-mall-local.xyz', 'https://api.shop-mall-local.xyz'] # ['https://*.mydomain.com','https://*.127.0.0.1']
 
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
+
+# logging for gunicorn
+import logging 
+logging.basicConfig(level='DEBUG')
+

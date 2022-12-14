@@ -1,0 +1,357 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %} Page User {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+    <!-- cropper -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.1.0/cropper.min.css"> -->
+{% endblock stylesheets %}
+
+{% block content %}
+
+          <div class="row">
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-header card-header-primary">
+                  <h4 class="card-title">Add New Product</h4>
+                  <p class="card-category">Provide Product Details</p>
+                </div>
+                <div class="card-body">
+                  <form action="{% url 'add_product' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Product Name</label>
+                          <input id="pname" name="name" type="text" class="form-control" required>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Slug</label>
+                          <input id="pslugshow" name="slugshow" type="text" class="form-control" disabled>
+                          <input id="pslug" name="slug" type="hidden" value="" class="form-control">
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Brand</label>
+                          <input name="brand" type="text" class="form-control" required>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-5">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Stock Keeping Unit (SKU)</label>
+                          <input name="sku" type="text" class="form-control" required>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Price</label>
+                          <input name="price" type="text" class="form-control" required>
+                        </div>
+                      </div><div class="col-md-4">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Old Price</label>
+                          <input name="old-price" type="text" class="form-control">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="">
+                          <label class="form-label">Product Image</label>
+                          <!-- Modal Start-->
+                          <div class="modal fade" id="staticBackdrop1" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdrop1Label" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="staticBackdropLabel">Add Product Image</h5>
+                                  <button type="button" class="btn-close close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                </div>
+                                <div class="modal-body">
+                                  <div class="container" id="container">
+                                    <label for="clipping" class="upload-area" id="upload-area">
+                                        Click to upload or Drag and Drop your file
+                                        <input name="image" type="file" name="pimage" id="clipping" required>
+                                    </label>
+                                  </div>
+
+                                  <div class="preview" style="width: 200px; height: 200px; overflow: hidden;"></div>
+                                  <div class="image-area mb-3"><div id="image-box"></div></div>
+
+                                </div>
+                                <div class="modal-footer">
+                                  <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+                                  <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- Modal End -->
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop1">
+                            Upload Image
+                          </button>
+                          <div style="width: 200px; height: 200px; overflow: hidden;">
+                            <img class="previewThumb" src="" alt="" width="50px">
+                          </div>
+                          <!-- crop data -->
+                          <input name="x-axis" id="x-axis" value="0" type="hidden">
+                          <input name="y-axis" id="y-axis" value="0" type="hidden">
+                          <input name="width" id="width" value="0" type="hidden">
+                          <input name="height" id="height" value="0" type="hidden">
+                          <!-- <input type="file" accept="image/jpg" class="form-control"> -->
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="">
+                          <label class="form-label">Product Thumbnails</label>
+                          <!-- Modal Start-->
+                          <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="staticBackdropLabel">Add Thumbnail Images</h5>
+                                  <button type="button" class="btn-close close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                </div>
+                                <div class="modal-body">
+                                  <div class="container" id="container">
+                                    <label for="clippings" class="upload-area" id="upload-area2">
+                                        Click to upload or Drag and Drop your file (Maximum of 4 allowed)
+                                        <input name="thumbnails" type="file" multiple name="pimages" id="clippings" required>
+                                    </label>
+                                  </div>
+
+                                  <h3>Previews</h3>
+                                  <div class="preview0 d-inline-block m-1" style="width: 100px; height: 100px; overflow: hidden;"></div>
+                                  <div class="preview1 d-inline-block m-1" style="width: 100px; height: 100px; overflow: hidden;"></div>
+                                  <div class="preview2 d-inline-block m-1" style="width: 100px; height: 100px; overflow: hidden;"></div>
+                                  <div class="preview3 d-inline-block m-1" style="width: 100px; height: 100px; overflow: hidden;"></div>
+                                  
+                                  <div class="image-area mb-3"><div id="image-box2"></div></div>
+
+                                </div>
+                                <div class="modal-footer">
+                                  <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+                                  <button type="button" class="btn btn-primary" data-dismiss="modal">Done</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- Modal End -->
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop">
+                            Upload Image
+                          </button>
+                          <br>
+                          <div class="d-inline-block" style="width: 100px; height: 100px; overflow: hidden;">
+                            <img class="previewThumb0 mx-1" src="" alt="" width="50px">
+                          </div>
+                          <div class="d-inline-block" style="width: 100px; height: 100px; overflow: hidden;">
+                            <img class="previewThumb1 mx-1" src="" alt="" width="50px">
+                          </div>
+                          <br>
+                          <div class="d-inline-block" style="width: 100px; height: 100px; overflow: hidden;">
+                            <img class="previewThumb2 mx-1" src="" alt="" width="50px">
+                          </div>
+                          <div class="d-inline-block" style="width: 100px; height: 100px; overflow: hidden;">
+                            <img class="previewThumb3 mx-1" src="" alt="" width="50px">
+                          </div>
+                          
+                          <!-- crop data 1-->
+                          <input name="x-axis1" id="x-axis1" value="0" type="hidden">
+                          <input name="y-axis1" value="0" type="hidden">
+                          <input name="width1" value="0" type="hidden">
+                          <input name="height1" value="0" type="hidden">
+                          <!-- crop data 2-->
+                          <input name="x-axis2" id="x-axis2" value="0" type="hidden">
+                          <input name="y-axis2" value="0" type="hidden">
+                          <input name="width2" value="0" type="hidden">
+                          <input name="height2" value="0" type="hidden">
+                          <!-- crop data 3-->
+                          <input name="x-axis3" id="x-axis3" value="0" type="hidden">
+                          <input name="y-axis3" value="0" type="hidden">
+                          <input name="width3" value="0" type="hidden">
+                          <input name="height3" value="0" type="hidden">
+                          <!-- crop data 4-->
+                          <input name="x-axis4" id="x-axis4" value="0" type="hidden">
+                          <input name="y-axis4" value="0" type="hidden">
+                          <input name="width4" value="0" type="hidden">
+                          <input name="height4" value="0" type="hidden">
+                          <!-- <input type="file" accept="image/jpg" class="form-control"> -->
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Image Caption</label>
+                          <input name="caption" type="text" class="form-control">
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Quantity</label>
+                          <input name="quantity" type="number" class="form-control" required>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label>Description</label>
+                          <div class="form-group">
+                            <label class="bmd-label-floating">Detailed description of your product.</label>
+                            <textarea name="description" rows="5" class="form-control" required></textarea>
+                          </div>
+                        </div>
+                      </div>
+                      
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <label>Meta Keywords</label>
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Comma-delimited set of SEO keywords for meta tag.</label>
+                          <input name="meta-keywords" type="text" class="form-control" required>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <label>Meta Description</label>
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Content for description meta tag.</label>
+                          <input name="meta-description" type="text" class="form-control" required>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <label>Categories</label>
+                        <small id="categoryHelp" class="form-text text-muted">Hold down “Control”, or “Command” on a Mac, to select more than one.</small>
+                        <div class="form-group d-flex align-items-center">
+                          <select name="categories" multiple required>
+                            {% for category in categories %}
+                            <option value="{{category.id}}" >{{category.name}}</option>
+                            {% endfor %}
+                          </select>
+                          <a data-toggle="modal" data-target="#staticBackdropCat" href="#!"><i class="fa fa-plus mx-3"></i></a>
+                        </div>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary pull-right">Update Profile</button>
+                    <div class="clearfix"></div>
+                  </form>
+                  <!-- Modal Start-->
+                  <div class="modal fade category-modal" id="staticBackdropCat" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropCatLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="staticBackdropCatLabel">Add a Category</h5>
+                          <button type="button" class="btn-close close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="modal-body">
+                          <p class="text-danger cat-err"></p>
+                          <form id="category-form" action="{% url 'add_category' %}" method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                              <div class="col-md-5">
+                                <div class="form-group">
+                                  <label class="bmd-label-floating">Category Name</label>
+                                  <input id="category_name" name="name" type="text" class="form-control" required>
+                                </div>
+                              </div>
+                              <div class="col-md-3">
+                                <div class="form-group">
+                                  <label class="bmd-label-floating">Slug</label>
+                                  <input id="category_slugshow" name="slugshow" type="text" class="form-control" disabled required>
+                                  <input id="category_slug" name="slug" type="hidden" class="form-control">
+                                </div>
+                              </div>
+                              <div class="col-md-4">
+                                ...
+                              </div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col-md-12">
+                                <div class="form-group">
+                                  <label>Description</label>
+                                  <div class="form-group">
+                                    <label class="bmd-label-floating">Detailed description the new category you would like to add.</label>
+                                    <textarea name="description" rows="5" class="form-control" required></textarea>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col-md-12">
+                                <label>Meta Keywords</label>
+                                <div class="form-group">
+                                  <label class="bmd-label-floating">Comma-delimited set of SEO keywords for meta tag.</label>
+                                  <input name="metakeywords" type="text" class="form-control" required>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-12">
+                                <label>Meta Description</label>
+                                <div class="form-group">
+                                  <label class="bmd-label-floating">Content for description meta tag.</label>
+                                  <input name="metadescription" type="text" class="form-control" required>
+                                </div>
+                              </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Save Category</button>
+                        </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Modal End -->
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card card-profile">
+                <div class="card-avatar">
+                  <a href="#pablo">
+                    <img class="img" src="{% static '/assets/img/faces/marc.jpg' %}" />
+                  </a>
+                </div>
+                <div class="card-body">
+                  <h6 class="card-category text-gray">
+                    {{ current_user.username }}
+                  </h6>
+                  <h4 class="card-title">
+                    {{ current_user.email }}
+                  </h4>
+                  <p class="card-description">
+                    Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...
+                  </p>
+                  <a href="#pablo" class="btn btn-primary btn-round">Follow</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+    <!-- cropper -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.1.0/cropper.min.js"></script> -->
+{% endblock javascripts %}

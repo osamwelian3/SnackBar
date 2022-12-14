@@ -1,0 +1,39 @@
+.container {
+    margin: 10px;
+}
+.book {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+#clippings {
+    display: none;
+}
+#clipping {
+    display: none;
+}
+.upload-area {
+    display: block;
+    padding: 80px;
+    border: dashed 5px gray;
+    text-align: center;
+}
+
+/* crop */
+.image-area {
+    border: 2px dashed rgba(255, 255, 255, 0.7);
+    padding: 1rem;
+}
+
+select[multiple] {
+    height: auto;
+    min-height: 150px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 5px 6px;
+}
+
+option:checked {
+    background-color: #9c27b0;
+    color: #ffff;
+}

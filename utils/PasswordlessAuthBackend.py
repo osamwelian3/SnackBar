@@ -17,10 +17,17 @@ class PasswordlessAuthBackend(ModelBackend):
 
         from django.contrib.auth.models import User
         try:
-            username = User.objects.get(username=username).username
-        except Exception as e:
-            print(e)
-            username = User.objects.get(email=username).username
+            if not User.objects.filter(username=username).exists():
+                # raise ValueError('Invalid Credentials')
+                pass
+            else:
+                username = User.objects.get(username=username).username
+        except User.DoesNotExist:
+            if not User.objects.filter(email=username).exists():
+                # raise ValueError('Invalid Credentials')
+                pass
+            else:
+                username = User.objects.get(email=username).username
 
         try:
             user = UserModel._default_manager.get_by_natural_key(username)
