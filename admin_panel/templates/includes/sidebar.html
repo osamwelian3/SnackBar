@@ -9,10 +9,18 @@
         <ul class="nav">
         {% if request.user.is_authenticated %}
 
-          <li class="nav-item {% if 'index' in segment %} active {% endif %}">
-            <a class="nav-link" href="/">
+          {% url 'dashboard' as url %}
+          <li class="nav-item {% if request.path == url %} active {% endif %}">
+            <a class="nav-link" href="{{ url }}">
               <i class="material-icons">dashboard</i>
               <p>Dashboard</p>
+            </a>
+          </li>
+          {% url 'add_product' as url %}
+          <li class="nav-item {% if request.path == url %} active {% endif %}">
+            <a class="nav-link" href="{{ url }}">
+              <i class="material-icons">add_circle_outline</i>
+              <p>Add Product</p>
             </a>
           </li>
           <li class="nav-item {% if 'page-user' in segment %} active {% endif %}">
@@ -21,8 +29,9 @@
               <p>User Profile</p>
             </a>
           </li>
-          <li class="nav-item {% if 'ui-tables' in segment %} active {% endif %}">
-            <a class="nav-link" href="{% url 'my_products' %}">
+          {% url 'my_products' as url %}
+          <li class="nav-item {% if request.path == url %} active {% endif %}">
+            <a class="nav-link" href="{{ url }}">
               <i class="material-icons">content_paste</i>
               <p>Products List</p>
             </a>

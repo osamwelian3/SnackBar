@@ -10,6 +10,10 @@ import json
 from django.core import serializers
 from SnackBar import settings
 from django.contrib.auth import get_user_model
+from django.template.loader import render_to_string
+from pathlib import Path
+import os
+import re
 
 User = get_user_model()
 
@@ -19,7 +23,7 @@ def login_view(request):
     if request.user.is_authenticated:
         if next is not None:
             return redirect(next)
-        return redirect(reverse('add_product'))
+        return redirect(reverse('dashboard'))
     form = LoginForm(request.POST or None)
 
     msg = None
@@ -34,7 +38,7 @@ def login_view(request):
                 login(request, user)
                 if next is not None:
                     return redirect(next)
-                return redirect(reverse('add_product'))
+                return redirect(reverse('dashboard'))
             else:
                 msg = 'Invalid credentials'
         else:
@@ -42,9 +46,14 @@ def login_view(request):
 
     return render(request, "accounts/login.html", {"form": form, "msg": msg})
 
+@login_required
 def logout_view(request):
     logout(request)
     return redirect(reverse('login'))
+
+@login_required
+def dashboard(request, template_name="home/index.html"):
+    return render(request, template_name, locals())
 
 @login_required
 def add_product(request, template_name='home/add_product.html'):
@@ -87,6 +96,71 @@ def add_product(request, template_name='home/add_product.html'):
     return render(request, template_name, locals())
 
 @login_required
+def activate_product(request, product_slug):
+    if not request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest':
+        return JsonResponse({'error': 'Operation not allowed'})
+    product = ''
+    try:
+        product = Product.objects.get(slug=product_slug)
+    except Exception as e:
+        return JsonResponse({'error': 'can\'t activate/deactivate this product because '+ str(e) +''})
+
+    if product.user.id == request.user.id:
+        msg = ''
+        if product.is_active:
+            product.is_active = False
+            msg = 'deactivated'
+        else:
+            product.is_active = True
+            msg = 'activated'
+        product.save()
+        return JsonResponse({'success': msg})
+    return JsonResponse({'error': 'can\'t activate/deactivate this product'})
+
+@login_required
+def update_product(request, product_slug):
+    if not request.user.is_staff:
+        logout(request)
+        return redirect(reverse('login', args='Login with a staff account to be able to add products'))
+    
+    if request.method == 'POST':
+        print(request.POST)
+        print(request.POST.get('slug'))
+        print('type of price ++++++++++++++++++++++++++')
+        price = request.POST.get('price')
+        from slugify import slugify
+        product = Product.objects.get(slug=product_slug)
+        product.name = request.POST.get('name'),
+        product.slug = slugify(request.POST.get('name')) if request.POST.get('slug') == '' or request.POST.get('slug') is None else request.POST.get('slug'),
+        product.brand = request.POST.get('brand'),
+        product.sku = request.POST.get('sku'),
+        product.price = float(price),
+        product.old_price = float(request.POST.get('old-price')) if request.POST.get('old-price') != '' else 0.00,
+        product.image_caption = request.POST.get('caption'),
+        product.quantity = int(request.POST.get('quantity')),
+        product.description = request.POST.get('description'),
+        product.meta_keywords = request.POST.get('meta-keywords'),
+        product.meta_description = request.POST.get('meta-description')
+        product.save()
+        
+        print(request.FILES)
+        if request.POST.get('image') != "":
+            upload_image(request, product)
+        if request.POST.get('thumbnails') != "":
+            upload = test_upload(request, product)
+            if 'success' in upload:
+                print('upload success')
+                print(request.POST.getlist('categories'))
+                cats = Category.objects.filter(pk__in=[int(x) for x in request.POST.getlist('categories')])
+                product = Product.objects.get(name=product.name)
+                product.categories.set(request.POST.getlist('categories'))
+                product.save()
+                return redirect(reverse('my_products'))
+    product = Product.objects.get(slug=product_slug)
+    categories = Category.objects.filter(is_active=True)
+    return render(request, "home/update_product.html", locals())
+
+@login_required
 def add_category(request, template_name='home/add_product.html'):
     if not request.user.is_staff:
         logout(request)
@@ -119,7 +193,7 @@ def add_category(request, template_name='home/add_product.html'):
     return render(request, template_name, locals())
 
 @login_required(login_url='login')
-def my_products(request, template_name='home/ui-tables.html'):
+def my_products(request, template_name='home/my_products.html'):
     categories = Category.objects.all()
     products = Product.objects.filter(user=request.user.id)
     return render(request, template_name, locals())
@@ -127,10 +201,8 @@ def my_products(request, template_name='home/ui-tables.html'):
 # Playground
 def upload_image(request, product):
     from PIL import Image
-    from pathlib import Path
     import glob
     if request.method == 'POST':
-        import os
         file = request.FILES
         try:
             os.makedirs(str(Path.joinpath(settings.BASE_DIR, f'media/products/{request.user.username}/{product.name}/').absolute()))
@@ -157,9 +229,7 @@ def test_upload(request, product):
         print(files)
         num_uploads = len(files.getlist('thumbnails'))
         print('numfiles '+str(num_uploads))
-        import os
         import glob
-        from pathlib import Path
         num_files = 0
         url_list = []
         for f in glob.iglob(str(Path.joinpath(settings.BASE_DIR, f'media/products/{request.user.username}/{product.name}/thumbnails/').absolute())+'/**/*.jpg', recursive=True):
@@ -168,7 +238,6 @@ def test_upload(request, product):
             l = r-1
             if not os.path.isfile(str(Path.joinpath(settings.BASE_DIR, f'media/products/{request.user.username}/{product.name}/thumbnails/').absolute())+'/'+'thumb-'+str(r)+'.jpg'):
                 from PIL import Image
-                import os
                 try:
                     os.makedirs(str(Path.joinpath(settings.BASE_DIR, f'media/products/{request.user.username}/{product.name}/thumbnails/').absolute()))
                 except FileExistsError:
@@ -204,6 +273,24 @@ def test_upload(request, product):
             product.thumbnail = url_list
             product.save()
             return {'success': 'Added {} thumbnail images.'.format(uploaded)}
+
+def delete_thumbnail(request, product_slug, pos):
+    product = Product.objects.get(slug=product_slug)
+
+    # remove file from file storage
+    path = str(Path.joinpath(settings.BASE_DIR, 'media/'+product.thumbnail[pos]))
+    if os.path.isfile(path):
+        try:
+            os.remove(path)
+        except Exception as e:
+            return JsonResponse({'error': str(e)})
+
+    thumb = product.thumbnail
+    thumbnail = thumb.copy()
+    thumbnail.pop(int(pos))
+    product.thumbnail = thumbnail
+    product.save()
+    return JsonResponse({'success': 'thumbnail image deleted'})
 
 # from PIL import Image
 

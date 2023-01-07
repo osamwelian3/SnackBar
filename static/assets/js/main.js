@@ -1,15 +1,15 @@
 const filesInput = document.getElementById('clippings');
 const fileInput = document.getElementById('clipping');
-filesInput.addEventListener('change', onUpload, false);
-fileInput.addEventListener('change', onUpload, false);
+filesInput?.addEventListener('change', onUpload, false);
+fileInput?.addEventListener('change', onUpload, false);
 
 const upload = document.getElementById('upload-area');
-upload.addEventListener('drop', onUpload);
-upload.addEventListener('dragover', onDragOver);
+upload?.addEventListener('drop', onUpload);
+upload?.addEventListener('dragover', onDragOver);
 
 const upload2 = document.getElementById('upload-area2');
-upload2.addEventListener('drop', onUpload);
-upload2.addEventListener('dragover', onDragOver);
+upload2?.addEventListener('drop', onUpload);
+upload2?.addEventListener('dragover', onDragOver);
 
 function onDragOver(event) {
   event.preventDefault();
@@ -217,25 +217,25 @@ let pielem = document.querySelector('#pname');
 let pselem = document.querySelector('#pslug')
 let pselemshow = document.querySelector('#pslugshow')
 
-pielem.addEventListener('change', () => updateSlug(pielem, pselem));
-pielem.addEventListener('keydown', () => updateSlug(pielem, pselem));
-pielem.addEventListener('keyup', () => updateSlug(pielem, pselem));
+pielem?.addEventListener('change', () => updateSlug(pielem, pselem));
+pielem?.addEventListener('keydown', () => updateSlug(pielem, pselem));
+pielem?.addEventListener('keyup', () => updateSlug(pielem, pselem));
 
-pielem.addEventListener('change', () => updateSlug(pielem, pselemshow));
-pielem.addEventListener('keydown', () => updateSlug(pielem, pselemshow));
-pielem.addEventListener('keyup', () => updateSlug(pielem, pselemshow));
+pielem?.addEventListener('change', () => updateSlug(pielem, pselemshow));
+pielem?.addEventListener('keydown', () => updateSlug(pielem, pselemshow));
+pielem?.addEventListener('keyup', () => updateSlug(pielem, pselemshow));
 
 let ielem = document.querySelector('#category_name');
 let selem = document.querySelector('#category_slug')
 let selemshow = document.querySelector('#category_slugshow')
 
-ielem.addEventListener('change', () => updateSlug(ielem, selem));
-ielem.addEventListener('keydown', () => updateSlug(ielem, selem));
-ielem.addEventListener('keyup', () => updateSlug(ielem, selem));
+ielem?.addEventListener('change', () => updateSlug(ielem, selem));
+ielem?.addEventListener('keydown', () => updateSlug(ielem, selem));
+ielem?.addEventListener('keyup', () => updateSlug(ielem, selem));
 
-ielem.addEventListener('change', () => updateSlug(ielem, selemshow));
-ielem.addEventListener('keydown', () => updateSlug(ielem, selemshow));
-ielem.addEventListener('keyup', () => updateSlug(ielem, selemshow));
+ielem?.addEventListener('change', () => updateSlug(ielem, selemshow));
+ielem?.addEventListener('keydown', () => updateSlug(ielem, selemshow));
+ielem?.addEventListener('keyup', () => updateSlug(ielem, selemshow));
 
 function updateSlug(inputElement, slugElement){
     newValue = inputElement.value.trim().replace(' ', '-').toLowerCase().replace(/(^| +)[!-\/:-@\[-`\{-~]*([^ ]*?)[!-\/:-@\[-`\{-~]*(?=\s|$)/gi, '$1$2'); //
@@ -272,3 +272,140 @@ $('#category-form').on('submit', function(event){
     }
     $('#category-form')[0].reset()
 })
+
+$(document).ready(function(){
+    $('[class="activate"]').on('change', function(e){
+        console.log(e.target);
+        if($(e.target).is(':checked')){
+            let msg = "Activating this product will make it visible to customers. Do you wish to proceed?";
+            if(confirm(msg)){
+                alert('activating....')
+                $(e.target.parentNode.nextElementSibling).removeAttr('style')
+                $(e.target.parentNode.nextElementSibling).attr('style', 'display: inline-block;')
+                $(e.target.parentNode).toggle()
+                var request = new XMLHttpRequest();
+                slug = e.target.value
+                request.open("GET", "/product/"+ slug +"/activate/");
+                request.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+                request.send();
+                request.onload = (evnt) => {
+                    console.log(JSON.parse(request.response))
+                    let response = JSON.parse(request.response)
+                    console.log(e.target.parentNode.nextElementSibling.nextElementSibling.nextElementSibling)
+                    if (response.success === 'activated'){
+                        $(e.target.parentNode.nextElementSibling).toggle()
+                        $(e.target.parentNode).toggle()
+                        $(e.target.parentNode.nextElementSibling.nextElementSibling.nextElementSibling).removeClass('bg-gradient-secondary')
+                        $(e.target.parentNode.nextElementSibling.nextElementSibling.nextElementSibling).addClass('bg-gradient-success')
+                        e.target.parentNode.nextElementSibling.nextElementSibling.nextElementSibling.innerHTML = 'Active'
+                    } else {
+                        $(e.target.parentNode.nextElementSibling).toggle()
+                        $(e.target.parentNode).toggle()
+                        let response = JSON.parse(request.response)
+                        alert(response.error)
+                        e.target.checked = !e.target.checked;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        alert('activation cancelled')
+                        return false;
+                    }
+                }
+            } else {
+                e.target.checked = !e.target.checked;
+                e.preventDefault();
+                e.stopPropagation();
+                alert('activation cancelled')
+                return false;
+            }
+        } else {
+            let msg = "Deactivating this product will remove it from the listing on the site. Do you wish to proceed?";
+            if(confirm(msg)){
+                alert('deactivating....')
+                $(e.target.parentNode.nextElementSibling).removeAttr('style')
+                $(e.target.parentNode.nextElementSibling).attr('style', 'display: inline-block;')
+                $(e.target.parentNode).toggle()
+                var request = new XMLHttpRequest();
+                slug = e.target.value
+                request.open("GET", "/product/"+ slug +"/activate/");
+                request.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+                request.send();
+                request.onload = (evnt) => {
+                    console.log(JSON.parse(request.response))
+                    console.log($(e.target).parent().html())
+                    let response = JSON.parse(request.response)
+                    console.log(e.target.parentNode.nextElementSibling.nextElementSibling.nextElementSibling)
+                    if (response.success === 'deactivated'){
+                        $(e.target.parentNode.nextElementSibling).toggle()
+                        $(e.target.parentNode).toggle()
+                        $(e.target.parentNode.nextElementSibling.nextElementSibling.nextElementSibling).removeClass('bg-gradient-success')
+                        $(e.target.parentNode.nextElementSibling.nextElementSibling.nextElementSibling).addClass('bg-gradient-secondary')
+                        e.target.parentNode.nextElementSibling.nextElementSibling.nextElementSibling.innerHTML = 'Inactive'
+                    } else {
+                        $(e.target.parentNode.nextElementSibling).toggle()
+                        $(e.target.parentNode).toggle()
+                        let response = JSON.parse(request.response)
+                        alert(response.error)
+                        e.target.checked = !e.target.checked;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        alert('deactivation cancelled')
+                        return false;
+                    }
+                }
+            } else {
+                console.log('e.target.checked: ' + e.target.checked)
+                e.target.checked = !e.target.checked;
+                e.preventDefault();
+                e.stopPropagation();
+                alert('deactivation cancelled')
+                return false;
+            }
+        }
+    });
+
+    Array.prototype.pushUnique = function(...items){
+        for(let item in items){
+            if(this.indexOf(items[item]) === -1) {
+                this.push(items[item]);
+            }
+        }
+        this.pop();
+    }
+
+    var slugArray = [];
+
+    $('[name="select_all"]').on('change', function(e){
+        $('.product_checkbox').prop('checked', this.checked)
+        $('.product_checkbox').prop('checked') == true ? ($('.actions').removeClass('d-none')) : $('.actions').addClass('d-none')
+        console.log($('[name="select_all"]').val());
+        ($('[name="select_all"]').val().split(',')).forEach(function(val, idx){
+            slugArray.pushUnique(val)
+        });
+        console.log(slugArray)
+    });
+
+    $('.product_checkbox').on('change', function(e){
+        $(this).prop('checked') == true ? $('.actions').removeClass('d-none') : ($('[name="select_all"]').prop('checked', false))
+        var allChecked = true;
+        var allUnChecked = true;
+        $('.product_checkbox').each(function(index, checkbox){
+            if($(checkbox).prop('checked') == false){
+                allChecked = false;
+            } else {
+                allUnChecked = false;
+                $('.actions').removeClass('d-none')
+                slugArray.pushUnique($(checkbox).val())
+                console.log(slugArray)
+            }
+            var isLast = index == $('.product_checkbox').length-1
+            if(isLast && allChecked){
+                $('[name="select_all"]').prop('checked', true)
+            }
+
+            if(allUnChecked){
+                $('.actions').addClass('d-none')
+            }
+        })
+    });
+});
+

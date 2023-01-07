@@ -1,7 +1,7 @@
 {% extends "layouts/base.html" %}
 {% load static %}
 
-{% block title %} Page User {% endblock %} 
+{% block title %} Update {{product.name}} {% endblock %} 
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
@@ -13,33 +13,33 @@
 {% block content %}
 
           <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
               <div class="card">
                 <div class="card-header card-header-primary">
-                  <h4 class="card-title">Add New Product</h4>
+                  <h4 class="card-title">Update {{product.name}}</h4>
                   <p class="card-category">Provide Product Details</p>
                 </div>
                 <div class="card-body">
-                  <form action="{% url 'add_product' %}" method="post" enctype="multipart/form-data">
+                  <form action="{% url 'update_product' product.slug %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="row">
                       <div class="col-md-5">
                         <div class="form-group">
                           <label class="bmd-label-floating">Product Name</label>
-                          <input id="pname" name="name" type="text" class="form-control" required>
+                          <input id="pname" name="name" type="text" class="form-control" value="{{product.name}}" required>
                         </div>
                       </div>
                       <div class="col-md-3">
                         <div class="form-group">
                           <label class="bmd-label-floating">Slug</label>
-                          <input id="pslugshow" name="slugshow" type="text" class="form-control" disabled>
-                          <input id="pslug" name="slug" type="hidden" value="" class="form-control">
+                          <input id="pslugshow" name="slugshow" type="text" class="form-control" value="{{product.slug}}" disabled>
+                          <input id="pslug" name="slug" type="hidden" value="{{product.slug}}" class="form-control">
                         </div>
                       </div>
                       <div class="col-md-4">
                         <div class="form-group">
                           <label class="bmd-label-floating">Brand</label>
-                          <input name="brand" type="text" class="form-control" required>
+                          <input name="brand" type="text" class="form-control" value="{{product.brand}}" required>
                         </div>
                       </div>
                     </div>
@@ -47,18 +47,18 @@
                       <div class="col-md-5">
                         <div class="form-group">
                           <label class="bmd-label-floating">Stock Keeping Unit (SKU)</label>
-                          <input name="sku" type="text" class="form-control" required>
+                          <input name="sku" type="text" class="form-control" value="{{product.sku}}" required>
                         </div>
                       </div>
                       <div class="col-md-3">
                         <div class="form-group">
                           <label class="bmd-label-floating">Price</label>
-                          <input name="price" type="text" class="form-control" required>
+                          <input name="price" type="number" class="form-control" value="{{product.price}}" required>
                         </div>
                       </div><div class="col-md-4">
                         <div class="form-group">
                           <label class="bmd-label-floating">Old Price</label>
-                          <input name="old-price" type="text" class="form-control">
+                          <input name="old-price" type="text" value="{{product.old_price}}" class="form-control">
                         </div>
                       </div>
                     </div>
@@ -78,7 +78,7 @@
                                   <div class="container" id="container">
                                     <label for="clipping" class="upload-area" id="upload-area">
                                         Click to upload or Drag and Drop your file
-                                        <input name="image" type="file" name="pimage" id="clipping" required>
+                                        <input name="image" type="file" name="pimage" id="clipping">
                                     </label>
                                   </div>
 
@@ -97,8 +97,9 @@
                           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop1">
                             Upload Image
                           </button>
-                          <div style="width: 200px; height: 200px; overflow: hidden;">
-                            <img class="previewThumb" src="" alt="" width="50px">
+                          <div class="position-relative" style="width: 200px; height: 200px; overflow: hidden;">
+                            <a href="#" class="badge badge-danger position-absolute" style="left: 40px;">x</a>
+                            <img class="previewThumb" src="{{MEDIA_URL}}{{product.image}}" alt="" width="50px">
                           </div>
                           <!-- crop data -->
                           <input name="x-axis" id="x-axis" value="0" type="hidden">
@@ -124,7 +125,7 @@
                                   <div class="container" id="container">
                                     <label for="clippings" class="upload-area" id="upload-area2">
                                         Click to upload or Drag and Drop your file (Maximum of 4 allowed)
-                                        <input name="thumbnails" type="file" multiple name="pimages" id="clippings" required>
+                                        <input name="thumbnails" type="file" multiple name="pimages" id="clippings">
                                     </label>
                                   </div>
 
@@ -149,18 +150,22 @@
                             Upload Image
                           </button>
                           <br>
-                          <div class="d-inline-block" style="width: 100px; height: 100px; overflow: hidden;">
-                            <img class="previewThumb0 mx-1" src="" alt="" width="50px">
+                          <div class="d-inline-block position-relative" style="width: 100px; height: 100px; overflow: hidden;">
+                            {% if product.thumbnail|length > 0 %}<a href="#" class="badge badge-danger position-absolute" style="left: 40px;">x</a>{% endif %}
+                            <img class="previewThumb0 mx-1" src="{% if product.thumbnail|length > 0 %}{{MEDIA_URL}}{{product.thumbnail.0}}{% endif %}" alt="" width="50px">
                           </div>
-                          <div class="d-inline-block" style="width: 100px; height: 100px; overflow: hidden;">
-                            <img class="previewThumb1 mx-1" src="" alt="" width="50px">
+                          <div class="d-inline-block position-relative" style="width: 100px; height: 100px; overflow: hidden;">
+                            {% if product.thumbnail|length > 1 %}<a href="#" class="badge badge-danger position-absolute" style="left: 40px;">x</a>{% endif %}
+                            <img class="previewThumb1 mx-1" src="{% if product.thumbnail|length > 1 %}{{MEDIA_URL}}{{product.thumbnail.1}}{% endif %}" alt="" width="50px">
                           </div>
                           <br>
-                          <div class="d-inline-block" style="width: 100px; height: 100px; overflow: hidden;">
-                            <img class="previewThumb2 mx-1" src="" alt="" width="50px">
+                          <div class="d-inline-block position-relative" style="width: 100px; height: 100px; overflow: hidden;">
+                            {% if product.thumbnail|length > 2 %}<a href="#" class="badge badge-danger position-absolute" style="left: 40px;">x</a>{% endif %}
+                            <img class="previewThumb2 mx-1" src="{% if product.thumbnail|length > 2 %}{{MEDIA_URL}}{{product.thumbnail.2}}{% endif %}" alt="" width="50px">
                           </div>
-                          <div class="d-inline-block" style="width: 100px; height: 100px; overflow: hidden;">
-                            <img class="previewThumb3 mx-1" src="" alt="" width="50px">
+                          <div class="d-inline-block position-relative" style="width: 100px; height: 100px; overflow: hidden;">
+                            {% if product.thumbnail|length > 3 %}<a href="#" class="badge badge-danger position-absolute" style="left: 40px;">x</a>{% endif %}
+                            <img class="previewThumb3 mx-1" src="{% if product.thumbnail|length > 3 %}{{MEDIA_URL}}{{product.thumbnail.3}}{% endif %}" alt="" width="50px">
                           </div>
                           
                           <!-- crop data 1-->
@@ -191,13 +196,13 @@
                       <div class="col-md-4">
                         <div class="form-group">
                           <label class="bmd-label-floating">Image Caption</label>
-                          <input name="caption" type="text" class="form-control">
+                          <input name="caption" type="text" value="{{product.image_caption}}" class="form-control">
                         </div>
                       </div>
                       <div class="col-md-4">
                         <div class="form-group">
                           <label class="bmd-label-floating">Quantity</label>
-                          <input name="quantity" type="number" class="form-control" required>
+                          <input name="quantity" type="number" value="{{product.quantity}}" class="form-control" required>
                         </div>
                       </div>
                     </div>
@@ -208,7 +213,7 @@
                           <label>Description</label>
                           <div class="form-group">
                             <label class="bmd-label-floating">Detailed description of your product.</label>
-                            <textarea name="description" rows="5" class="form-control" required></textarea>
+                            <textarea name="description" rows="5" value="{{product.description}}" class="form-control" required>{{product.description}}</textarea>
                           </div>
                         </div>
                       </div>
@@ -219,7 +224,7 @@
                         <label>Meta Keywords</label>
                         <div class="form-group">
                           <label class="bmd-label-floating">Comma-delimited set of SEO keywords for meta tag.</label>
-                          <input name="meta-keywords" type="text" class="form-control" required>
+                          <input name="meta-keywords" type="text" value="{{product.meta_keywords}}" class="form-control" required>
                         </div>
                       </div>
                     </div>
@@ -228,7 +233,7 @@
                         <label>Meta Description</label>
                         <div class="form-group">
                           <label class="bmd-label-floating">Content for description meta tag.</label>
-                          <input name="meta-description" type="text" class="form-control" required>
+                          <input name="meta-description" type="text" value="{{product.meta_description}}" class="form-control" required>
                         </div>
                       </div>
                     </div>
@@ -237,16 +242,17 @@
                         <label>Categories</label>
                         <small id="categoryHelp" class="form-text text-muted">Hold down “Control”, or “Command” on a Mac, to select more than one.</small>
                         <div class="form-group d-flex align-items-center">
+                          
                           <select name="categories" multiple required>
                             {% for category in categories %}
-                            <option value="{{category.id}}" >{{category.name}}</option>
+                            <option value="{{category.id}}" {% for categ in product.categories.all %}{% if category.name == categ.name %}selected{% endif %}{% endfor %}>{{category.name}}</option>
                             {% endfor %}
                           </select>
                           <a data-toggle="modal" data-target="#staticBackdropCat" href="#!"><i class="fa fa-plus mx-3"></i></a>
                         </div>
                       </div>
                     </div>
-                    <button type="submit" class="btn btn-primary pull-right">Add Product</button>
+                    <button type="submit" class="btn btn-primary pull-right">Update Product</button>
                     <div class="clearfix"></div>
                   </form>
                   <!-- Modal Start-->
@@ -321,27 +327,6 @@
                     </div>
                   </div>
                   <!-- Modal End -->
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card card-profile">
-                <div class="card-avatar">
-                  <a href="#pablo">
-                    <img class="img" src="{% static '/assets/img/faces/marc.jpg' %}" />
-                  </a>
-                </div>
-                <div class="card-body">
-                  <h6 class="card-category text-gray">
-                    {{ current_user.username }}
-                  </h6>
-                  <h4 class="card-title">
-                    {{ current_user.email }}
-                  </h4>
-                  <p class="card-description">
-                    Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...
-                  </p>
-                  <a href="#pablo" class="btn btn-primary btn-round">Follow</a>
                 </div>
               </div>
             </div>

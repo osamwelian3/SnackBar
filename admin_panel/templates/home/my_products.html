@@ -21,8 +21,34 @@
                 <div class="table-responsive p-0">
                   <table class="table align-items-center mb-0">
                     <thead>
+                      <tr class="actions d-none">
+                        <th>
+                          <form>
+                            <input type="hidden" name="slug" value="">
+                            <button class="btn btn-danger"><span class="material-icons">delete</span> Delete selected</button>
+                          </form>
+                        </th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                      </tr>
                       <tr>
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Product</th>
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                          <div class="d-flex px-2 py-1">
+                            <span class="d-flex flex-column justify-content-center me-3">
+                              <div class="form-check">
+                                <label class="form-check-label">
+                                  <input class="form-check-input" type="checkbox" name="select_all" id="all_products" value="{% for product in products %}{{ product.slug }}{% if not forloop.last %},{% endif %}{% endfor %}">
+                                  <span class="form-check-sign">
+                                    <span class="check"></span>
+                                  </span>
+                                </label>
+                              </div>
+                            </span>
+                            <span>Product</span>
+                          </div>
+                        </th>
                         <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">SKU<br>Price</th>
                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Created</th>
@@ -34,6 +60,16 @@
                       <tr>
                         <td>
                           <div class="d-flex px-2 py-1">
+                            <div class="d-flex flex-column justify-content-center me-3">
+                              <div class="form-check">
+                                <label class="form-check-label">
+                                  <input class="form-check-input product_checkbox" type="checkbox" name="{{ product.slug }}" id="{{ product.slug }}" value="{{ product.slug }}">
+                                  <span class="form-check-sign">
+                                    <span class="check"></span>
+                                  </span>
+                                </label>
+                              </div>
+                            </div>
                             <div>
                               <img src="{{ MEDIA_URL }}{{ product.image }}" class="avatar avatar-sm me-3 border-radius-lg" alt="user1">
                             </div>
@@ -61,11 +97,12 @@
                           <span class="text-secondary text-xs font-weight-bold">{{ product.created_at }}</span>
                         </td>
                         <td class="align-middle">
-                          <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                          <a href="javascript:;" onclick="return showEditPopup('/update/product/{{product.slug}}')" class="text-secondary font-weight-bold text-xs">
                             Edit
                           </a>
                         </td>
                       </tr>
+
                       {% endfor %}
                       <!-- <tr>
                         <td>
@@ -445,4 +482,25 @@
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+
+<script type="text/javascript">
+function showEditPopup(url) {
+    var win = window.open(url, "Edit", 
+        'height=500,width=800,resizable=yes,scrollbars=yes');
+    return false;
+}
+function showAddPopup(triggeringLink) {
+    var name = triggeringLink.id.replace(/^add_/, '');
+    href = triggeringLink.href;
+    var win = window.open(href, name, 'height=500,width=800,resizable=yes,scrollbars=yes');
+    win.focus();
+    return false;
+}
+function closePopup(win, newID, newRepr, id) {
+    $(id).append('<option value=' + newID + ' selected >' + newRepr + '</option>')
+    win.close();
+}
+
+</script>
+{% endblock javascripts %}
